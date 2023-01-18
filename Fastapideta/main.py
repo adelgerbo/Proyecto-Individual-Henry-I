@@ -4,8 +4,48 @@ from pandasql import sqldf
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
+# Generamos la documentación de nuestra API a efectos de que el usuario conozca
+# qué consultas puede realizar y qué parámetros debe ingresar
+tags_metadata = [
+    {
+        "name": "Contar palabras",
+        "description": "Cuenta cantidad de titulos conteniendo la keyword \
+        solicitada. Requiere el ingreso de una **keyword** a buscar y \
+        una **plataforma** (netflix, disney, hulu, amazon). En todos los \
+        casos se debe ingresar en minúsculas",
+    },
+    {
+        "name": "Cantidad puntaje mínimo",
+        "description": "Cuenta cantidad de **películas** que superan el \
+        score indicado para cierto año y plataforma. Requiere el \
+        ingreso del **año** en formato AAAA, el **score** como un \
+        entero del 0 a 99 y la **plataforma** (netflix, disney, hulu, amazon)",
+    },
+    {
+        "name": "Segunda mayor score",
+        "description": "Devuelve la segunda **película** con mayor score \
+        para una plataforma. En caso de empate, utiliza el orden alfabético.\
+        Requiere ingresar la **plataforma** (netflix, disney, hulu, amazon) \
+        en minúsculas",
+    },
+    {
+        "name": "Mayor duración",
+        "description": "Informa cual es la **película** con mayor duración \
+        en minutos o la **serie** con mas temporadas, de acuerdo al tipo de \
+        duración ingresado. Requiere ingresar el **año** en formato AAAA, \
+        el **tipo de duración** (min / season) y la **plataforma** (netflix, \
+        disney, hulu, amazon), todo en minúsculas",
+    },
+    {
+        "name": "Cantidad por rating",
+        "description": "Devuelve la cantidad total de **películas** y **series** \
+        de acuerdo al **rating** ingresado (16, 13+, 16+, 18+, 7+, ages_16_, \
+        ages_18_, all, all_ages, g, nc-17, not rated, not_rate, nr, pg, pg-13, r, \
+        tv-14, tv-g, tv-ma, tv-nr, tv-pg, tv-y, tv-y7, tv-y7-fv, unrated, ur)",
+    },
+]
 
-app = FastAPI()
+app = FastAPI(openapi_tags=tags_metadata)
 
 
 # Importamos los archivos CSV, uno para cada servicio de streaming
@@ -141,11 +181,19 @@ moviesdb.info()
 pysqldf = lambda q: sqldf(q, globals())
 
 
+# Definimos el mensaje a mostrar cuando el usuario ingrese al root de nuestra API
+@app.get("/")
+def docs():
+    return "Por favor ingrese a https://c0q8v6.deta.dev/docs para acceder a la documentación de la aplicación"
+
+
 # Definimos la función para el siguiente requerimiento: Cantidad de veces que aparece
 # una keyword en el título de peliculas/series, por plataforma
-
-
-@app.get("/get_word_count/{plataforma}/{keyword}", response_class=PlainTextResponse)
+@app.get(
+    "/get_word_count/{plataforma}/{keyword}",
+    response_class=PlainTextResponse,
+    tags=["Contar palabras"],
+)
 def get_word_count(keyword: str, plataforma: str):
     if plataforma == "amazon":
         plat = "a%"
@@ -177,7 +225,9 @@ def get_word_count(keyword: str, plataforma: str):
 
 
 @app.get(
-    "/get_score_count/{plataforma}/{score}/{anio}", response_class=PlainTextResponse
+    "/get_score_count/{plataforma}/{score}/{anio}",
+    response_class=PlainTextResponse,
+    tags=["Cantidad puntaje mínimo"],
 )
 def get_score_count(plataforma: str, score: str, anio: str):
     if plataforma == "amazon":
@@ -212,8 +262,12 @@ def get_score_count(plataforma: str, score: str, anio: str):
 # Definimos la función para el siguiente requerimiento: La segunda película
 # con mayor score para una plataforma determinada,
 # según el orden alfabético de los títulos.
-@app.get("/get_second_score/{plataforma}", response_class=PlainTextResponse)
-def get_score_count(plataforma: str):
+@app.get(
+    "/get_second_score/{plataforma}",
+    response_class=PlainTextResponse,
+    tags=["Segunda mayor score"],
+)
+def get_second_score(plataforma: str):
     if plataforma == "amazon":
         plat = "a%"
     elif plataforma == "netflix":
@@ -231,7 +285,7 @@ def get_score_count(plataforma: str):
         WHERE id LIKE '"""
         + plat
         + """'
-        AND type = "movie"Película que más duró según año, plataforma y tipo de duración
+        AND type = "movie"
         ORDER BY score DESC, title ASC
         LIMIT 1,1"""
     )
@@ -243,9 +297,11 @@ def get_score_count(plataforma: str):
 # en minutos o Serie que más duró en temporadas, según año, plataforma y tipo de duración
 # El tipo de duración indica si se consulta por películas o series
 @app.get(
-    "/get_longest/{plataforma}/{tipo_duracion}/{anio}", response_class=PlainTextResponse
+    "/get_longest/{plataforma}/{tipo_duracion}/{anio}",
+    response_class=PlainTextResponse,
+    tags=["Mayor duración"],
 )
-def get_score_count(plataforma: str, tipo_duracion: str, anio: str):
+def get_longest(plataforma: str, tipo_duracion: str, anio: str):
     if plataforma == "amazon":
         plat = "a%"
     elif plataforma == "netflix":
@@ -289,8 +345,12 @@ def get_score_count(plataforma: str, tipo_duracion: str, anio: str):
 
 # Definimos la función para el siguiente requerimiento: Cantidad de
 # series y películas por rating
-@app.get("/get_rating_count/{rating}", response_class=PlainTextResponse)
-def get_score_count(rating: str):
+@app.get(
+    "/get_rating_count/{rating}",
+    response_class=PlainTextResponse,
+    tags=["Cantidad por rating"],
+)
+def get_rating_count(rating: str):
     query = (
         """SELECT count(title)
         FROM moviesdb
