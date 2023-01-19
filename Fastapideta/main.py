@@ -2,7 +2,7 @@
 """
 Pandas: Manejo de Dataframes
 Fastapi: Implementación de la API
-PlainTextResponde: Output de la información en formato texto
+PlainTextResponse: Output de la información en formato texto
 Pandasql: Consultas sobre dataframes mediante lenguaje SQL
 """
 import pandas as pd
