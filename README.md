@@ -51,7 +51,7 @@ Por último, se solicita documentar todo el proceso y el funcionamiento de la AP
 ### **Instrucciones para el uso de la API**
 
 1.  A efectos de consultar la documentación, se debe ingresar a la siguiente URL: <https://c0q8v6.deta.dev/docs> . Allí pueden realizarse tambien consultas manualmente utilizando la interfaz disponible.
-2.  Para efecutar las consultas solicitadas, se coloca luego de la URL, el nombre de la consulta y los parámetros solicitados, de acuerdo al siguiente detalle:
+2.  Para efectuar las consultas solicitadas, se coloca luego de la URL, el nombre de la consulta y los parámetros solicitados, de acuerdo al siguiente detalle:
 -   /get_word_count/{plataforma}/{keyword}: Cuenta cantidad de titulos conteniendo la keyword solicitada. Requiere el ingreso de una **keyword** a buscar y una **plataforma** (netflix, disney, hulu, amazon). A efectos de este proyecto, se nos indicó que si la keyword informada se encuentra dentro de una palabra mas grande, se incluye como resultado positivo (ejemplo: “Cloverfield” se considera como “love” también).  
     En todos los casos se debe ingresar en minúsculas.   
     Ejemplo: <https://c0q8v6.deta.dev/get_word_count/netflix/love> (Cantidad de películas y series de Netflix que contienen la palabra “love”)
@@ -62,7 +62,7 @@ Por último, se solicita documentar todo el proceso y el funcionamiento de la AP
 -   /get_longest/{plataforma}/{tipo_duracion}/{anio}: Informa cual es la **película** con mayor duración en minutos o la **serie** con mas temporadas, de acuerdo al tipo de duración ingresado. Requiere ingresar el **año** en formato AAAA, el **tipo de duración** (min / season) y la **plataforma** (netflix, disney, hulu, amazon), todo en minúsculas.  
     Ejemplo: <https://c0q8v6.deta.dev/get_longest/netflix/min/2016> (Película de mayor duración en minutos en la plataforma Netflix lanzada en el año 2016. De haber utilizado el parámetro “season” en lugar de “min”, el resultado hubiera hecho referencia a la o las series con mayor cantidad de temporadas).
 -   /get_rating_count/{rating}: Devuelve la cantidad total de **películas** y **series** de acuerdo al **rating** ingresado (16, 13+, 16+, 18+, 7+, ages_16_, ages_18_, all, all_ages, g, nc-17, not rated, not_rate, nr, pg, pg-13, r, tv-14, tv-g, tv-ma, tv-nr, tv-pg, tv-y, tv-y7, tv-y7-fv, unrated, ur).  
-    Ejemplo: <https://c0q8v6.deta.dev/get_rating_count/18>+ (Cantidad de películas y series cuyo rating es “18+”).
+    Ejemplo: <https://c0q8v6.deta.dev/get_rating_count/18+> (Cantidad de películas y series cuyo rating es “18+”).
 
 
 
