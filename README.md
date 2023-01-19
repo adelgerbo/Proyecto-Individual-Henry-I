@@ -2,7 +2,7 @@
 
 ## **PROYECTO INDIVIDUAL I**
 
-#### **Alejandro del Gerbo Actis**
+**Alejandro del Gerbo Actis**
 
 ### **Temática:**
 
