@@ -1,6 +1,6 @@
 <h1 align=center> HENRY’S LABS </h1>
 
-<h2 align=center>PROYECTO INDIVIDUAL I<br>
+<h2 align=center>PROYECTO INDIVIDUAL I -- DATA ENGINEERING<br>
     Alejandro del Gerbo Actis</h2>
 
 
