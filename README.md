@@ -1,10 +1,10 @@
-**HENRY’S LABS**
+# **HENRY’S LABS**
 
-**PROYECTO INDIVIDUAL I**
+## **PROYECTO INDIVIDUAL I**
 
-**Alejandro del Gerbo Actis**
+#### **Alejandro del Gerbo Actis**
 
-**Temática:**
+### **Temática:**
 
 El proyecto consistía en situarse en el rol de Data Engineer, a quien como miembro del equipo de una empresa, el Tech Lead le solicita realizar un proceso de ETL sobre cuatro datasets proporcionados, conteniendo información relativa a los catálogos de series y películas de cuatro plataformas de streaming (Netflix, Hulu, Amazon Prime Video y Disney).
 
@@ -12,7 +12,7 @@ Como segunda parte del requerimiento, se solicitaba elaborar una API a efectos d
 
 Por último, se solicita documentar todo el proceso y el funcionamiento de la API, y efectuar un video que sería remitido al Tech Lead que nos encargó el proyecto para que nos efectúe un feedback sobre el mismo.
 
-**Detalles del requerimiento:**
+### **Detalles del requerimiento:**
 
 -   **Transformaciones:** Se solicitó efectuar las siguientes transformaciones sobres los datos provistos:
     -   Generar campo id: Cada id se debía componer de la primera letra del nombre de la plataforma, seguido del show id ya presente en los datasets (ejemplo: para títulos de Amazon = as123)
@@ -27,16 +27,16 @@ Por último, se solicita documentar todo el proceso y el funcionamiento de la AP
     -   Película de mayor duración o serie con más temporadas, según año, plataforma y tipo de duración (minutos para películas o seasons para series)
     -   Cantidad de series y películas por rating
 
-**Herramientas utilizadas:**
+### **Herramientas utilizadas:**
 
--   **Python**: lenguaje de programación utilizado, que brinda acceso a librerías apropiadas para realizar la tarea encomendada de manera eficaz y eficiente.
--   **Pandas:** librería que nos permite el acceso a los archivos csv provistos, su conversión en dataframes, la transformación de los datos y la posterior exportación de los mismos en un único archivo, el cual luego será utilizado por la API para disponibilizar los datos.
--   **Pandasql:** librería que nos permite efectuar consultas con lenguaje SQL sobre Dataframes de Pandas.
--   **FastApi:** framework para la construcción de la API en Python.
--   **Uvicorn:** nos permite efectuar pruebas para controlar el funciomaniento de la API de manera local previa a su despliegue en Deta.
--   **Deta:** plataforma online y gratuita, que nos permite disponibilizar tanto la API como los datos para que puedan ser consultados por el usuario mediante su software.
+-   **[Python](https://www.python.org/)**: lenguaje de programación utilizado, que brinda acceso a librerías apropiadas para realizar la tarea encomendada de manera eficaz y eficiente.
+-   **[Pandas](https://pandas.pydata.org/):** librería que nos permite el acceso a los archivos csv provistos, su conversión en dataframes, la transformación de los datos y la posterior exportación de los mismos en un único archivo, el cual luego será utilizado por la API para disponibilizar los datos.
+-   **[Pandasql](https://pypi.org/project/pandasql/):** librería que nos permite efectuar consultas con lenguaje SQL sobre Dataframes de Pandas.
+-   **[FastApi](https://fastapi.tiangolo.com/):** framework para la construcción de la API en Python.
+-   **[Uvicorn](https://www.uvicorn.org/):** nos permite efectuar pruebas para controlar el funciomaniento de la API de manera local previa a su despliegue en Deta.
+-   **[Deta](https://www.deta.sh/):** plataforma online y gratuita, que nos permite disponibilizar tanto la API como los datos para que puedan ser consultados por el usuario mediante su software.
 
-**Tareas realizadas:**
+### **Tareas realizadas:**
 
 -   Se colocaron los datasets provistos en el directorio Datasets y se realizó una vista previa de su contenido
 -   Se importó la librería Pandas para ingestar los cuatro archivos csv (uno por cada plataforma de streaming), se efecutaron las transformaciones sobre los datos solicitadas y se exportó a un único archivo csv conteniendo los catálogos de las cuatro plataformas de streaming. Este punto puede revisarse en detalle accediendo al notebook que contiene el código comentado y las sucesivas visualizaciones y resultados ( <https://github.com/adelgerbo/Proyecto-individual-1-Henry/blob/main/ETL.ipynb> ).
@@ -48,7 +48,7 @@ Por último, se solicita documentar todo el proceso y el funcionamiento de la AP
 -   Se grabó, editó y publicó el video solicitado en el cual se expone la API en funcionamiento, efectuando en vivo todas las consultas solicitadas. Al mismo se accede mediante la siguiente URL: https://www.youtube.com/watch?v=hgNbuqcuIKo
 -   Se preparó el Readme.md con la documentación.
 
-**Instrucciones para el uso de la API:**
+### **Instrucciones para el uso de la API:**
 
 1.  A efectos de consultar la documentación, se debe ingresar a la siguiente URL: <https://c0q8v6.deta.dev/docs> . Allí pueden realizarse tambien consultas manualmente utilizando la interfaz disponible.
 2.  Para efecutar las consultas solicitadas, se coloca luego de la URL, el nombre de la consulta y los parámetros solicitados, de acuerdo al siguiente detalle:
@@ -62,4 +62,4 @@ Por último, se solicita documentar todo el proceso y el funcionamiento de la AP
 -   /get_longest/{plataforma}/{tipo_duracion}/{anio}: Informa cual es la **película** con mayor duración en minutos o la **serie** con mas temporadas, de acuerdo al tipo de duración ingresado. Requiere ingresar el **año** en formato AAAA, el **tipo de duración** (min / season) y la **plataforma** (netflix, disney, hulu, amazon), todo en minúsculas.  
     Ejemplo: <https://c0q8v6.deta.dev/get_longest/netflix/min/2016> (Película de mayor duración en minutos en la plataforma Netflix lanzada en el año 2016. De haber utilizado el parámetro “season” en lugar de “min”, el resultado hubiera hecho referencia a la o las series con mayor cantidad de temporadas).
 -   /get_rating_count/{rating}: Devuelve la cantidad total de **películas** y **series** de acuerdo al **rating** ingresado (16, 13+, 16+, 18+, 7+, ages_16_, ages_18_, all, all_ages, g, nc-17, not rated, not_rate, nr, pg, pg-13, r, tv-14, tv-g, tv-ma, tv-nr, tv-pg, tv-y, tv-y7, tv-y7-fv, unrated, ur).  
-    Ejemplo: <https://c0q8v6.deta.dev/get_rating_count/18>+ (Cantidad de películas y series cuyo rating es “18+”.
+    Ejemplo: <https://c0q8v6.deta.dev/get_rating_count/18>+ (Cantidad de películas y series cuyo rating es “18+”).
