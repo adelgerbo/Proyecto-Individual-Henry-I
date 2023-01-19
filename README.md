@@ -1,8 +1,8 @@
-# **HENRY’S LABS**
+<h1 align=center> HENRY’S LABS </h1>
 
-## **PROYECTO INDIVIDUAL I**
+<h2 align=center>PROYECTO INDIVIDUAL I<br>
+    Alejandro del Gerbo Actis</h2>
 
-**Alejandro del Gerbo Actis**
 
 ### **Temática:**
 
