@@ -1,8 +1,14 @@
 # Importamos las librerias necesarias
+"""
+Pandas: Manejo de Dataframes
+Fastapi: Implementación de la API
+PlainTextResponde: Output de la información en formato texto
+Pandasql: Consultas sobre dataframes mediante lenguaje SQL
+"""
 import pandas as pd
-from pandasql import sqldf
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
+from pandasql import sqldf
 
 # Generamos la documentación de nuestra API a efectos de que el usuario conozca
 # qué consultas puede realizar y qué parámetros debe ingresar
@@ -45,138 +51,18 @@ tags_metadata = [
     },
 ]
 
+# Inicializamos la API
 app = FastAPI(openapi_tags=tags_metadata)
 
 
-# Importamos los archivos CSV, uno para cada servicio de streaming
-Amazon = pd.read_csv(
-    "https://raw.githubusercontent.com/adelgerbo/Datasets/main/amazon_prime_titles-score.csv"
+# Importamos el dataset unificado
+moviesdb = pd.read_csv(
+    "https://raw.githubusercontent.com/adelgerbo/Datasets/main/movies_database.csv"
 )
-Disney = pd.read_csv(
-    "https://raw.githubusercontent.com/adelgerbo/Datasets/main/disney_plus_titles-score.csv"
-)
-Hulu = pd.read_csv(
-    "https://raw.githubusercontent.com/adelgerbo/Datasets/main/hulu_titles-score%20(2).csv"
-)
-Netflix = pd.read_csv(
-    "https://raw.githubusercontent.com/adelgerbo/Datasets/main/netflix_titles-score.csv"
-)
-
-
-# Verificamos la importaciòn correcta de los datasets
-Amazon.head()
-
-
-Disney.head()
-
-
-Hulu.head()
-
-
-Netflix.tail()
-
-
-# Generamos el campo id: Cada id se compondrá de la primera letra del
-# nombre de la plataforma, seguido del show_id ya presente en los
-# datasets (ejemplo para títulos de Amazon = as123)
-
-Amazon.insert(loc=0, column="id", value="a" + Amazon["show_id"])
-
-Disney.insert(loc=0, column="id", value="d" + Disney["show_id"])
-
-Hulu.insert(loc=0, column="id", value="h" + Hulu["show_id"])
-
-Netflix.insert(loc=0, column="id", value="n" + Netflix["show_id"])
-
-
-# Comprobamos la correcta inserciòn del nuevo campo
-Netflix.head()
-
-
-# Juntamos todos los datasets en uno solo, ya que contamos
-# con el campo id para diferenciar el servicio, y las
-# transformaciones a continuación se aplican a todos por igual
-
-
-moviesdb = Amazon.append(Disney).append(Hulu).append(Netflix)
-
-
-# Verificamos el resultado
-moviesdb.head()
-
-
-moviesdb.tail()
-
-
-# Verificamos existencia y cantidad de nulos por columna en el dataframe
-moviesdb.isnull().sum()
-
-
-# Reemplazamos los valores nulos del campo "Rating" por la letra "G"
-# (corresponde al maturity rating "General por all audiences")
-
-moviesdb["rating"].fillna("G", inplace=True)
-
-
-# Controlamos la correcciòn sobre la columna "rating"
-moviesdb.isnull().sum()
-
-
-# Visualizamos el dataframe modificado
-moviesdb.head(30)
-
-
-# Cambiamos el formato de la columna "date_added" a AAAA-mm-dd
-moviesdb["date_added"] = pd.to_datetime(moviesdb["date_added"])
-
-
-# Verificamos
-moviesdb.tail()
-
-
-# Pasamos a minúsculas los campos de texto
-moviesdb["type"] = moviesdb["type"].str.lower()
-moviesdb["title"] = moviesdb["title"].str.lower()
-moviesdb["director"] = moviesdb["director"].str.lower()
-moviesdb["cast"] = moviesdb["cast"].str.lower()
-moviesdb["country"] = moviesdb["country"].str.lower()
-moviesdb["rating"] = moviesdb["rating"].str.lower()
-moviesdb["duration"] = moviesdb["duration"].str.lower()
-moviesdb["listed_in"] = moviesdb["listed_in"].str.lower()
-moviesdb["description"] = moviesdb["description"].str.lower()
-
-
-# Verificamos
-moviesdb.head()
-
-
-# Separamos el campo "duration" en 2 columnas
-splitcolumns = moviesdb["duration"].str.split(" ", n=1, expand=True)
-
-# Insertamos una columna con las cantidades
-moviesdb["duration_int"] = splitcolumns[0]
-
-# Insertamos una columna con la unidad de medición
-moviesdb["duration_type"] = splitcolumns[1]
-
-
-# Reemplazamos "seasons" por "season" en la columna "duration_type"
-moviesdb["duration_type"] = moviesdb["duration_type"].str.replace("seasons", "season")
-
-
-# Cambiamor el formato del campo "duration_int" a integer
-moviesdb["duration_int"] = moviesdb["duration_int"].astype("Int64")
-
-
-# Verificamos
-moviesdb.head(10)
-
-
-moviesdb.info()
 
 
 # Comenzamos con las consultas al dataframe. Esta función nos evitará pasar variables
-# globales cada vez que usemos un objeto
+# globales cada vez que utilicemos un objeto
 
 pysqldf = lambda q: sqldf(q, globals())
 
@@ -184,6 +70,9 @@ pysqldf = lambda q: sqldf(q, globals())
 # Definimos el mensaje a mostrar cuando el usuario ingrese al root de nuestra API
 @app.get("/")
 def docs():
+    """
+    Muestra un mensaje al usuario cuando ingresa al root
+    """
     return "Por favor ingrese a https://c0q8v6.deta.dev/docs para acceder a la documentación de la aplicación"
 
 
@@ -195,6 +84,12 @@ def docs():
     tags=["Contar palabras"],
 )
 def get_word_count(keyword: str, plataforma: str):
+    """
+    Cuenta cantidad de titulos conteniendo la keyword solicitada.
+    Requiere el ingreso de una **keyword** a buscar y una **plataforma**
+    (netflix, disney, hulu, amazon).
+    En todos los casos se debe ingresar en minúsculas
+    """
     if plataforma == "amazon":
         plat = "a%"
     elif plataforma == "netflix":
@@ -222,14 +117,17 @@ def get_word_count(keyword: str, plataforma: str):
 
 # Definimos la función para el siguiente requerimiento: Cantidad de películas
 # por plataforma con un puntaje mayor a XX en determinado año
-
-
 @app.get(
     "/get_score_count/{plataforma}/{score}/{anio}",
     response_class=PlainTextResponse,
     tags=["Cantidad puntaje mínimo"],
 )
 def get_score_count(plataforma: str, score: str, anio: str):
+    """
+    Cuenta cantidad de **películas** que superan el score indicado para cierto año y plataforma.
+    Requiere el ingreso del **año** en formato AAAA, el **score** como un entero del 0 a 99
+    y la **plataforma** (netflix, disney, hulu, amazon)
+    """
     if plataforma == "amazon":
         plat = "a%"
     elif plataforma == "netflix":
@@ -268,6 +166,11 @@ def get_score_count(plataforma: str, score: str, anio: str):
     tags=["Segunda mayor score"],
 )
 def get_second_score(plataforma: str):
+    """
+    Devuelve la segunda **película** con mayor score para una plataforma.
+    En caso de empate, utiliza el orden alfabético.
+    Requiere ingresar la **plataforma** (netflix, disney, hulu, amazon) en minúsculas.
+    """
     if plataforma == "amazon":
         plat = "a%"
     elif plataforma == "netflix":
@@ -302,6 +205,12 @@ def get_second_score(plataforma: str):
     tags=["Mayor duración"],
 )
 def get_longest(plataforma: str, tipo_duracion: str, anio: str):
+    """
+    Informa cual es la **película** con mayor duración en minutos o la **serie**
+    con mas temporadas, de acuerdo al tipo de duración ingresado.
+    Requiere ingresar el **año** en formato AAAA, el **tipo de duración** (min / season)
+    y la **plataforma** (netflix, disney, hulu, amazon), todo en minúsculas
+    """
     if plataforma == "amazon":
         plat = "a%"
     elif plataforma == "netflix":
@@ -351,6 +260,12 @@ def get_longest(plataforma: str, tipo_duracion: str, anio: str):
     tags=["Cantidad por rating"],
 )
 def get_rating_count(rating: str):
+    """
+    Devuelve la cantidad total de **películas** y **series** de acuerdo al **rating**
+    ingresado (16, 13+, 16+, 18+, 7+, ages_16_, ages_18_, all, all_ages, g, nc-17,
+    not rated, not_rate, nr, pg, pg-13, r, tv-14, tv-g, tv-ma, tv-nr, tv-pg, tv-y,
+    tv-y7, tv-y7-fv, unrated, ur)
+    """
     query = (
         """SELECT count(title)
         FROM moviesdb
